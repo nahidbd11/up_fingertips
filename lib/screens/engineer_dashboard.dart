@@ -289,10 +289,16 @@ class _DuplicateCheckMapState extends State<_DuplicateCheckMap> {
                 border: Border.all(color: AppColors.warning.withAlpha(80)),
               ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(Icons.warning_amber_rounded, color: AppColors.warning, size: 18.sp),
                   SizedBox(width: 8.w),
-                  Text('2 similar projects found within $_radius in $_yearRange', style: TextStyle(fontSize: 12.sp, color: AppColors.warning, fontWeight: FontWeight.w600)),
+                  Expanded(
+                    child: Text(
+                      '2 similar projects found within $_radius in $_yearRange',
+                      style: TextStyle(fontSize: 12.sp, color: AppColors.warning, fontWeight: FontWeight.w600),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -327,11 +333,30 @@ class _DuplicateCheckMapState extends State<_DuplicateCheckMap> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () {},
-                icon: Icon(Icons.add_circle_outline, size: 18.sp),
-                label: const Text('Proceed to Create Project • প্রকল্প তৈরি করুন'),
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Row(children: [
+                      const Icon(Icons.send_outlined, color: Colors.white, size: 16),
+                      SizedBox(width: 8.w),
+                      const Expanded(
+                        child: Text(
+                          'Duplicate alert sent to UNO for review. UNO will be notified immediately.',
+                        ),
+                      ),
+                    ]),
+                    backgroundColor: AppColors.warning,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    duration: const Duration(seconds: 4),
+                  ));
+                },
+                icon: Icon(Icons.report_problem_outlined, size: 18.sp),
+                label: const Text('Alert UNO — Duplicate Project Found'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.success,
+                  backgroundColor: AppColors.warning,
+                  foregroundColor: Colors.white,
                   padding: EdgeInsets.symmetric(vertical: 14.h),
                 ),
               ),

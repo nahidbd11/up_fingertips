@@ -638,31 +638,6 @@ class _ActionButtons extends StatelessWidget {
       children: [
         SizedBox(
           width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Row(children: [
-                  const Icon(Icons.send_outlined, color: Colors.white, size: 16),
-                  SizedBox(width: 8.w),
-                  const Expanded(child: Text('Alert escalated to UNO for review. Notification sent.')),
-                ]),
-                backgroundColor: AppColors.primary,
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
-                duration: const Duration(seconds: 3),
-              ));
-            },
-            icon: Icon(Icons.report_problem_outlined, size: 18.sp),
-            label: Text('Escalate to UNO for Review', style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700)),
-            style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 14.h),
-              backgroundColor: AppColors.error,
-            ),
-          ),
-        ),
-        SizedBox(height: 10.h),
-        SizedBox(
-          width: double.infinity,
           child: OutlinedButton.icon(
             onPressed: () {
               showDialog(
