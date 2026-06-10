@@ -1140,6 +1140,7 @@ class MapPlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: height.h,
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: const Color(0xFFE8EFF5),
         borderRadius: BorderRadius.circular(16.r),
@@ -1147,7 +1148,7 @@ class MapPlaceholder extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          CustomPaint(size: Size.infinite, painter: _MapGridPainter()),
+          Positioned.fill(child: _GoogleMapTileGrid()),
           if (showCircle)
             Center(
               child: Container(
@@ -1195,7 +1196,7 @@ class MapPlaceholder extends StatelessWidget {
                 color: Colors.white.withAlpha(220),
                 borderRadius: BorderRadius.circular(6.r),
               ),
-              child: Text('© OpenStreetMap', style: TextStyle(fontSize: 9.sp, color: AppColors.textHint)),
+              child: Text('© Google Maps', style: TextStyle(fontSize: 9.sp, color: AppColors.textHint)),
             ),
           ),
         ],
@@ -1204,20 +1205,57 @@ class MapPlaceholder extends StatelessWidget {
   }
 }
 
-class _MapGridPainter extends CustomPainter {
+// ─── GOOGLE MAPS TILE GRID ────────────────────────────────────
+// Renders a 3×2 grid of real Google Maps tiles for Fatullah,
+// Narayanganj, Bangladesh (zoom 13 — centre tile x=6155, y=3543).
+// Falls back to a plain grey fill if network is unavailable.
+
+class _GoogleMapTileGrid extends StatelessWidget {
   @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = const Color(0xFFCFD8DC)..strokeWidth = 0.5;
-    for (double x = 0; x < size.width; x += 30) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
-    }
-    for (double y = 0; y < size.height; y += 30) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
-    }
+  Widget build(BuildContext context) {
+    // 3 columns × 2 rows of adjacent tiles around the project area
+    const int zoom = 13;
+    return Column(
+      children: [
+        Expanded(
+          child: Row(
+            children: [6154, 6155, 6156]
+                .map((x) => Expanded(child: _MapTile(x: x, y: 3542, zoom: zoom)))
+                .toList(),
+          ),
+        ),
+        Expanded(
+          child: Row(
+            children: [6154, 6155, 6156]
+                .map((x) => Expanded(child: _MapTile(x: x, y: 3543, zoom: zoom)))
+                .toList(),
+          ),
+        ),
+      ],
+    );
   }
+}
+
+class _MapTile extends StatelessWidget {
+  final int x, y, zoom;
+  const _MapTile({required this.x, required this.y, required this.zoom});
 
   @override
-  bool shouldRepaint(_) => false;
+  Widget build(BuildContext context) {
+    // Distribute requests across mt0–mt3 mirrors
+    final server = (x + y) % 4;
+    final url = 'https://mt$server.google.com/vt/lyrs=m&hl=en&x=$x&y=$y&z=$zoom';
+    return Image.network(
+      url,
+      fit: BoxFit.cover,
+      width: double.infinity,
+      height: double.infinity,
+      errorBuilder: (_, _, _) =>
+          Container(color: const Color(0xFFE0E8F0)),
+      loadingBuilder: (_, child, progress) =>
+          progress == null ? child : Container(color: const Color(0xFFE8EFF5)),
+    );
+  }
 }
 
 // ─── MAP PIN PICKER ──────────────────────────────────────────
@@ -1307,8 +1345,8 @@ class _MapPinPickerState extends State<MapPinPicker> {
               borderRadius: BorderRadius.circular(12.r),
               child: Stack(
                 children: [
-                  // Map grid background
-                  CustomPaint(size: Size(mapW, mapH), painter: _MapGridPainter()),
+                  // Google Maps tile background
+                  SizedBox(width: mapW, height: mapH, child: _GoogleMapTileGrid()),
 
                   // Tap area
                   GestureDetector(

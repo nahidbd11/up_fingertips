@@ -575,7 +575,7 @@ class _WardProjectListState extends State<_WardProjectList> {
               : ListView.separated(
                   padding: EdgeInsets.all(16.w),
                   itemCount: _filtered.length,
-                  separatorBuilder: (_, __) => SizedBox(height: 12.h),
+                  separatorBuilder: (_, _) => SizedBox(height: 12.h),
                   itemBuilder: (_, i) {
                     final p = _filtered[i];
                     return _WardProjectTile(
@@ -774,7 +774,7 @@ class _NoticesList extends StatelessWidget {
     return ListView.separated(
       padding: EdgeInsets.all(16.w),
       itemCount: _mockNotices.length,
-      separatorBuilder: (_, __) => SizedBox(height: 12.h),
+      separatorBuilder: (_, _) => SizedBox(height: 12.h),
       itemBuilder: (_, i) {
         final n = _mockNotices[i];
         final categoryColor = _categoryColor(n.category);
@@ -1062,7 +1062,7 @@ class _MeetingMinutesList extends StatelessWidget {
     return ListView.separated(
       padding: EdgeInsets.all(16.w),
       itemCount: mockMeetingMinutes.length,
-      separatorBuilder: (_, __) => SizedBox(height: 12.h),
+      separatorBuilder: (_, _) => SizedBox(height: 12.h),
       itemBuilder: (_, i) {
         final m = mockMeetingMinutes[i];
         return GestureDetector(
